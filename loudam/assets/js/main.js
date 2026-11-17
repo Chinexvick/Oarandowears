@@ -1,39 +1,33 @@
-/* LOUDAM — small interactions. Vanilla JS, no tracking, no third-party requests. */
+/* LOUDAM — small interactions. No tracking, no third-party requests. */
 (function () {
   "use strict";
-
-  /* ---- Site settings ---- */
   var CONFIG = {
     email: "info@loudam.ng",
     whatsapp: "2349014665213" // digits only, with country code. Leave empty to hide WhatsApp buttons.
   };
-
   var $ = function (s, r) { return (r || document).querySelector(s); };
   var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
 
-  /* WhatsApp links with a prefilled greeting */
+  /* WhatsApp */
   if (/^\d{8,15}$/.test(CONFIG.whatsapp)) {
     $$("[data-wa]").forEach(function (a) {
-      a.hidden = false;
-      a.target = "_blank";
-      a.rel = "noopener noreferrer";
+      a.hidden = false; a.target = "_blank"; a.rel = "noopener noreferrer";
       a.href = "https://wa.me/" + CONFIG.whatsapp + "?text=" + encodeURIComponent("Hello LOUDAM, I'd like to talk about growing my business.");
     });
   }
-
   var y = $("#year"); if (y) y.textContent = String(new Date().getFullYear());
 
-  /* Mobile menu */
-  var burger = $(".burger"), menu = $("#menu");
+  /* Menu (mobile) */
+  var btn = $(".menu-btn"), menu = $("#menu");
   function setMenu(open) {
     menu.classList.toggle("open", open);
-    burger.setAttribute("aria-expanded", open ? "true" : "false");
-    burger.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+    btn.setAttribute("aria-expanded", open ? "true" : "false");
+    btn.firstElementChild.textContent = open ? "Close" : "Menu";
+    document.body.classList.toggle("noscroll", open);
   }
-  burger.addEventListener("click", function () { setMenu(!menu.classList.contains("open")); });
-  $$("a", menu).forEach(function (a) { a.addEventListener("click", function () { setMenu(false); }); });
+  btn.addEventListener("click", function () { setMenu(!menu.classList.contains("open")); });
   document.addEventListener("keydown", function (e) { if (e.key === "Escape") setMenu(false); });
-  window.addEventListener("resize", function () { if (window.innerWidth > 860) setMenu(false); });
+  window.addEventListener("resize", function () { if (window.innerWidth > 900) setMenu(false); });
 
   /* Work filters */
   var fb = $$(".filters button"), projs = $$(".proj");
@@ -45,13 +39,29 @@
     });
   });
 
-  /* Pricing links prefill the proposal form */
-  $$(".plans a[data-svc]").forEach(function (a) {
-    a.addEventListener("click", function () {
-      var t = $("#propForm textarea[name='Project description']");
-      if (t && !t.value) t.value = "I'm interested in a " + a.getAttribute("data-svc") + " engagement.";
-    });
+  /* Pricing: remember which plan was chosen */
+  $$("a[data-svc]").forEach(function (a) {
+    a.addEventListener("click", function () { try { sessionStorage.setItem("plan", a.getAttribute("data-svc")); } catch (e) {} });
   });
+
+  /* Contact tabs (#book / #proposal) */
+  var tabs = $$(".tabs button");
+  if (tabs.length) {
+    var show = function (id) {
+      tabs.forEach(function (t) {
+        var on = t.getAttribute("aria-controls") === id;
+        t.setAttribute("aria-selected", on ? "true" : "false");
+        $("#" + t.getAttribute("aria-controls")).hidden = !on;
+      });
+    };
+    tabs.forEach(function (t) { t.addEventListener("click", function () { var id = t.getAttribute("aria-controls"); show(id); history.replaceState(null, "", "#" + id); }); });
+    var h = location.hash.slice(1);
+    show(h === "proposal" ? "proposal" : "book");
+    var plan = null; try { plan = sessionStorage.getItem("plan"); } catch (e) {}
+    var t = $("#propForm textarea[name='Project description']");
+    if (plan && h === "proposal" && t && !t.value) t.value = "I'm interested in a " + plan + " engagement.";
+    window.addEventListener("hashchange", function () { var x = location.hash.slice(1); if (x === "book" || x === "proposal") show(x); });
+  }
 
   /* Forms: open the visitor's email app with the details filled in */
   $$("form.form").forEach(function (form) {
@@ -72,17 +82,4 @@
       note.textContent = "Your email app should open with the details ready to send to " + CONFIG.email + ".";
     });
   });
-
-  /* Highlight the current section in the menu */
-  var links = $$(".nav__links a:not(.btn)");
-  var secs = ["about", "services", "work", "pricing", "insights", "contact"].map(function (id) { return document.getElementById(id); });
-  var ticking = false;
-  function update() {
-    ticking = false;
-    var active = "";
-    secs.forEach(function (s) { if (s && s.getBoundingClientRect().top < window.innerHeight * 0.35) active = s.id; });
-    links.forEach(function (a) { a.classList.toggle("on", a.getAttribute("href") === "#" + active); });
-  }
-  window.addEventListener("scroll", function () { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
-  update();
 })();
