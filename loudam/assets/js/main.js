@@ -17,6 +17,18 @@
   }
   var y = $("#year"); if (y) y.textContent = String(new Date().getFullYear());
 
+  /* Header turns solid after scrolling */
+  var bar = $(".bar");
+  function onScroll() { bar.classList.toggle("sc", window.scrollY > 24); }
+  window.addEventListener("scroll", onScroll, { passive: true }); onScroll();
+
+  /* Subtle reveal on scroll */
+  var rv = $$(".choice, .svc, .proj, .plans article, .topics article, .steps li, .trio > div, .cta__in, .reach, .head");
+  if ("IntersectionObserver" in window && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    var io = new IntersectionObserver(function (en) { en.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }); }, { rootMargin: "0px 0px -6% 0px", threshold: 0.08 });
+    rv.forEach(function (el) { el.classList.add("rv"); io.observe(el); });
+  }
+
   /* Menu (mobile) */
   var btn = $(".menu-btn"), menu = $("#menu");
   function setMenu(open) {
@@ -24,6 +36,7 @@
     btn.setAttribute("aria-expanded", open ? "true" : "false");
     btn.firstElementChild.textContent = open ? "Close" : "Menu";
     document.body.classList.toggle("noscroll", open);
+    document.body.classList.toggle("menu-open", open);
   }
   btn.addEventListener("click", function () { setMenu(!menu.classList.contains("open")); });
   document.addEventListener("keydown", function (e) { if (e.key === "Escape") setMenu(false); });
