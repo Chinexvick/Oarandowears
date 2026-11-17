@@ -41,6 +41,10 @@ section:not(.hero) { padding-block: clamp(70px, 11vw, 140px); }
 .btn--ghost { background: rgba(255,255,255,.04); border-color: rgba(255,255,255,.16); } .btn--ghost:hover { box-shadow: none; border-color: var(--o2); }
 .btn--sm { padding: 11px 20px; font-size: .86rem; } .btn--lg { padding: 18px 32px; font-size: 1rem; }
 [hidden] { display: none !important; }
+svg .fill { fill: currentColor; stroke: none; }
+.btn--wa { background: #1faa52; } .btn--wa:hover { box-shadow: 0 14px 40px -12px rgba(31,170,82,.7); } .btn--wa svg { font-size: 1.2em; }
+.wa-float { position: fixed; z-index: 94; right: 16px; bottom: 22px; width: 58px; height: 58px; border-radius: 50%; display: grid; place-items: center; background: #25d366; color: #fff; font-size: 30px; box-shadow: 0 14px 30px -8px rgba(37,211,102,.6); transition: transform .4s var(--ease); }
+.wa-float:hover { transform: scale(1.08); }
 
 /* nav */
 .nav { position: fixed; z-index: 100; inset: 12px var(--gut) auto; display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 9px 9px 9px 20px; border-radius: 999px; border: 1px solid transparent; transition: background .4s, border-color .4s, backdrop-filter .4s, transform .5s var(--ease); }
@@ -249,6 +253,8 @@ input[aria-invalid="true"] { border-color: var(--pink); } textarea { resize: ver
   .dock a { display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: .62rem; font-weight: 700; letter-spacing: .04em; color: var(--mut); padding: 6px 0; transition: color .3s; } .dock a svg { font-size: 21px; } .dock a.on { color: #fff; }
   .dock__main { width: 62px; height: 62px; margin: -30px auto 0; border-radius: 50%; background: var(--grad); color: #fff !important; justify-content: center; box-shadow: 0 14px 30px -8px rgba(255,91,31,.8), 0 0 0 6px var(--bg); } .dock__main svg { font-size: 26px !important; }
   .nav.menu-open ~ .dock, body.locked .dock { transform: translateY(160%); }
+  .wa-float { bottom: calc(104px + env(safe-area-inset-bottom)); width: 52px; height: 52px; font-size: 27px; right: 14px; }
+  body.locked .wa-float { display: none; }
 }
 body.locked { overflow: hidden; }
 

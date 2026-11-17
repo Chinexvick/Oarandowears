@@ -5,7 +5,7 @@
   /* ---- Site settings: fill these in when you have the details ---- */
   var CONFIG = {
     email: "info@loudam.ng",
-    whatsapp: "" // digits only with country code, e.g. "2348012345678". Leave empty to hide WhatsApp buttons.
+    whatsapp: "2349014665213" // digits only with country code, e.g. "2348012345678". Leave empty to hide WhatsApp buttons.
   };
 
   var doc = document.documentElement;
